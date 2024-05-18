@@ -6,7 +6,7 @@ from streamlit_extras.add_vertical_space import add_vertical_space
 import locale
 
 # =================== Set Locale ===========================#
-locale.setlocale(locale.LC_MONETARY, "Portuguese_Brazil.1252") 
+locale.setlocale(locale.LC_MONETARY, 'pt_BR.UTF-8') 
 
 #==================== Carregando Dados =====================#
 df = st.session_state['data']
