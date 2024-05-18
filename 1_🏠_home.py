@@ -32,3 +32,20 @@ st.markdown('# SUPERMARKET SALES DATASET!🍞🧀🥩')
 
 st.link_button(label='Acesse o dataset no kaggle', url='https://www.kaggle.com/datasets/aungpyaeap/supermarket-sales')
 st.link_button(label='Acesse o repositório do projeto', url='https://github.com/andrecsabino/supermarketsales')
+
+st.write('''
+    Montagem de dashboard usando python, com uma base de dados retirada do Kaggle, utilizando algumas bibliotecas chaves
+    como o Streamlit.
+    
+    o dataset trata das vendas de três supermercados, detalhando algumas informações como cidade, clientes (genero),
+    tipo de cliente (se é membro ou não), a categoria do produto e a quantidade vendida.
+         
+    Utilizei as bibliotecas:
+    
+    📺 Streamlit: Montar o app e fazer o deploy
+    
+    🐼 Pandas: Tratamento de dados
+    
+    📈 Plotly: Visualização de dados
+    
+''')

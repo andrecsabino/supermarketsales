@@ -27,32 +27,27 @@ deparaanalise = {
 
 
 # ==================== PLOT FUNCTIONS ======================#
-def pie_plot(dataframe, cities: list):
+def pie_plot(dataframe, cities: list, values_col:str, labels_col:str):
     specs = [[{'type':'domain'},{'type':'domain'}, {'type':'domain'}]]
     fig = make_subplots(rows=1, cols=len(cities), specs=specs)
     for i, city in enumerate(cities):
         df = dataframe[dataframe['City'] == city]
         fig.add_trace(
             go.Pie(
-                values=df['Total'].tolist(),
-                labels=df['Product line'].unique().tolist(),
+                values=df[values_col].tolist(),
+                labels=df[labels_col],
                 title=city
             ),
             row=1, col=i+1
         )
 
-    fig.update_traces(textposition='inside', textinfo='value+percent')
+    fig.update_traces(textposition='inside', textinfo='percent')
     fig = go.Figure(fig)
     return fig
 
 # ====================== Sidebar ========================== #
 with st.sidebar:
     st.caption('**Filtros**')
-    eixo = st.selectbox(
-        label='Selecione o eixo', 
-        options=['Gênero', 'Tipo de cliente', 'Tipo de produto'],
-        index=0
-        )
     choice = st.multiselect(
         label='Período', 
         options=df['Month'].sort_values().unique().tolist(),
@@ -91,56 +86,72 @@ with col2:
 with col3:
     st.metric(label='Itens Vendidos', value=f'{quantity}')
 
-add_vertical_space(5)
 
+add_vertical_space(5)
 ############################### AREA DOS GRÁFICOS #############################
 # ============================= EVOLUÇÃO FATURAMENTO =========================== #
-st.markdown(f'### ***Evolução*** do Faturamento')
-fig_line = px.line(
-    data_frame=df_evolucao,
-    x=df_evolucao.index,
-    y='Total',
-    color='City'
-   
-)
-st.plotly_chart(fig_line, use_container_width=True)
-
-
-# ================================ FATURAMENTO POR CATEGORIA  ================== #
-st.markdown(f'### ***Faturamento*** por categoria')
-st.plotly_chart(
-    pie_plot(
-        dataframe=df_filtered_period, 
-        cities=df_filtered_period['City'].unique().tolist()
-    ),
-    use_container_width=True
-)
-
-
-# ================================ Ticket Médio ==================================#
-st.markdown('#### Ticket Médio por Categoria')
-st.plotly_chart(
-    px.histogram(
-        data_frame=df_tm_period,
-        x='Product line',
-        y='Ticket Medio',
-        barmode='group',
-        color='City'       
-    ),
-    use_container_width=True
-)
-
-#============================ Análise =========================================== #
-st.markdown(f'### Faturamento por ***{eixo.lower()}***')
-fig_one = px.histogram(
-    data_frame=df_filtered_period, 
-    x=deparaeixo[eixo], 
-    y='Total',
-    color='City',
-    barmode='group', 
-
+with st.container():
+    st.markdown(f'### ***Evolução*** do Faturamento')
+    fig_line = px.line(
+        data_frame=df_evolucao,
+        x=df_evolucao.index,
+        y='Total',
+        color='City'
+    
     )
-st.plotly_chart(fig_one, use_container_width=True)
+    st.plotly_chart(fig_line, use_container_width=True)
 
+add_vertical_space(5)
+# ================================ FATURAMENTO POR CATEGORIA  ================== #
+with st.container():
+    st.markdown(f'### ***Faturamento*** por categoria')
+    st.plotly_chart(
+        pie_plot(
+            dataframe=df_filtered_period, 
+            cities=df_filtered_period['City'].unique().tolist(),
+            values_col='Total',
+            labels_col='Product line'
+        ),
+        use_container_width=True
+    )
 
-
+add_vertical_space(5)
+# ================================ Ticket Médio ==================================#
+with st.container():
+    st.markdown('#### Ticket Médio por Categoria')
+    st.plotly_chart(
+        px.histogram(
+            data_frame=df_tm_period,
+            x='Product line',
+            y='Ticket Medio',
+            barmode='group',
+            color='City'       
+        ),
+        use_container_width=True
+    )
+add_vertical_space(5)
+#============================ Por forma de pagamento ============================== #
+with st.container():
+    st.markdown('### Vendas por forma de pagamento')
+    tab1, tab2 = st.tabs(['Gráfico de Barras','Distribuição %'])
+    with tab1:
+        st.plotly_chart(
+            px.histogram(
+                data_frame=df_filtered_period,
+                x='City',
+                y='Total',
+                color='Payment',
+                barmode='group'
+            ),
+            use_container_width=True
+        )
+    with tab2:
+        st.plotly_chart(
+            pie_plot(
+                dataframe=df_filtered_period,
+                cities=df_filtered_period['City'].unique().tolist(),
+                values_col='Total',
+                labels_col='Payment'
+            ),
+            use_container_width=True
+        )
