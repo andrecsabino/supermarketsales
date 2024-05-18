@@ -3,10 +3,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from streamlit_extras.add_vertical_space import add_vertical_space
-import locale
-
-# =================== Set Locale ===========================#
-locale.setlocale(locale.LC_MONETARY, 'pt_BR.UTF-8') 
 
 #==================== Carregando Dados =====================#
 df = st.session_state['data']
@@ -71,17 +67,17 @@ df_tm_all['Ticket Medio'] = df_tm_all['Total'] / df_tm_all['Invoice ID']
 df_tm_period = df_tm_all if not choice else df_tm[df_tm['Month'].isin(choice)]
 
 # --------------------- METRICS ----------------------------#
-profit = locale.currency(df_filtered_period['Total'].sum(), grouping=True)
-tm = locale.currency(df_tm_period['Total'].sum() / df_tm_period['Invoice ID'].sum(), grouping=True)
+profit = df_filtered_period['Total'].sum()
+tm = df_tm_period['Total'].sum() / df_tm_period['Invoice ID'].sum()
 quantity = df_filtered_period['Quantity'].sum()
 
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    st.metric(label='Faturamento', value=f'{profit}')
+    st.metric(label='Faturamento', value=f'{profit:.2f}')
 
 with col2:
-    st.metric(label='Ticket Medio', value=f'{tm}')
+    st.metric(label='Ticket Medio', value=f'{tm:.2f}')
 
 with col3:
     st.metric(label='Itens Vendidos', value=f'{quantity}')
